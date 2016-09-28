@@ -33,8 +33,10 @@ import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.TestInfo;
+import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.prelude.Prelude;
+import org.pitest.functional.FunctionalList;
+import org.pitest.functional.predicate.Predicate;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.HistoryStore;
@@ -52,6 +54,7 @@ import org.pitest.mutationtest.build.WorkerFactory;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.engine.MutationEngine;
+import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.execute.MutationAnalysisExecutor;
 import org.pitest.mutationtest.filter.MutationFilterFactory;
 import org.pitest.mutationtest.incremental.DefaultCodeHistory;
@@ -59,9 +62,13 @@ import org.pitest.mutationtest.incremental.HistoryListener;
 import org.pitest.mutationtest.incremental.IncrementalAnalyser;
 import org.pitest.mutationtest.statistics.MutationStatisticsListener;
 import org.pitest.mutationtest.statistics.Score;
+import org.pitest.util.Glob;
 import org.pitest.util.Log;
 import org.pitest.util.StringUtil;
 import org.pitest.util.Timings;
+
+import static org.pitest.functional.prelude.Prelude.or;
+import static org.pitest.util.Glob.toGlobPredicates;
 
 public class MutationCoverage {
 
@@ -118,9 +125,14 @@ public class MutationCoverage {
 
     final MutationStatisticsListener stats = new MutationStatisticsListener();
 
+    F<String, Predicate<MethodInfo>> f = excludedMethodToMethodInfoPredicate();
+    final FunctionalList<Predicate<MethodInfo>> excludedMethods =
+            FCollection.map(this.data.getExcludedMethods(), f);
+
+    Collection<Predicate<String>> ps = toGlobPredicates(this.data.getExcludedMethods());
     final MutationEngine engine = this.strategies.factory().createEngine(
         this.data.isMutateStaticInitializers(),
-        Prelude.or(this.data.getExcludedMethods()),
+            or(excludedMethods),
         this.data.getLoggingClasses(), this.data.getMutators(),
         this.data.isDetectInlinedCode());
 
@@ -157,6 +169,29 @@ public class MutationCoverage {
     return new CombinedStatistics(stats.getStatistics(),
         coverageData.createSummary());
 
+  }
+
+  private F<String, Predicate<MethodInfo>> excludedMethodToMethodInfoPredicate() {
+    return new F<String, Predicate<MethodInfo>>() {
+      @Override
+      public Predicate<MethodInfo> apply(final String excludedMethodSpecification) {
+        return new Predicate<MethodInfo>() {
+
+          @Override
+          public Boolean apply(final MethodInfo methodInfo) {
+            if (!excludedMethodSpecification.contains("#")) {
+              return new Glob(excludedMethodSpecification).matches(methodInfo.getName());
+            }
+
+            String[] parts = excludedMethodSpecification.split("#");
+            String classNameGlob = parts[0];
+            String methodNameGlob = parts[1];
+            String owningClassName = methodInfo.getOwningClass().getName().replace('/', '.');
+            return new Glob(classNameGlob).matches(owningClassName) && new Glob(methodNameGlob).matches(methodInfo.getName());
+          }
+        };
+      }
+    };
   }
 
   private void checkExcludedRunners() {

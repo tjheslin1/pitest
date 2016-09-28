@@ -44,6 +44,10 @@ public class MethodInfo {
     return this.methodName;
   }
 
+  public ClassInfo getOwningClass() {
+    return owningClass;
+  }
+
   public String getMethodDescriptor() {
     return this.methodDescriptor;
   }

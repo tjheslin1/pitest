@@ -258,13 +258,9 @@ public class OptionsParserTest {
   @Test
   public void shouldParseCommaSeparatedListOfExcludedMethods() {
     final ReportOptions actual = parseAddingRequiredArgs("--excludedMethods",
-        "foo*,bar*,car");
-    final Predicate<String> actualPredicate = Prelude.or(actual
-        .getExcludedMethods());
-    assertTrue(actualPredicate.apply("foox"));
-    assertTrue(actualPredicate.apply("barx"));
-    assertTrue(actualPredicate.apply("car"));
-    assertFalse(actualPredicate.apply("carx"));
+            "foo*,bar*,car");
+
+    assertThat(actual.getExcludedMethods()).containsExactly("foo*", "bar*", "car");
   }
 
   @Test

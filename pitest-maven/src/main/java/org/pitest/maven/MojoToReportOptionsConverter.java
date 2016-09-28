@@ -99,8 +99,8 @@ public class MojoToReportOptionsConverter {
     data.setTargetTests(determineTargetTests());
 
     data.setMutateStaticInitializers(this.mojo.isMutateStaticInitializers());
-    data.setExcludedMethods(globStringsToPredicates(this.mojo
-        .getExcludedMethods()));
+    data.setExcludedMethods(this.mojo
+        .getExcludedMethods());
     data.setExcludedClasses(globStringsToPredicates(this.mojo
         .getExcludedClasses()));
     data.setNumberOfThreads(this.mojo.getThreads());
@@ -135,7 +135,7 @@ public class MojoToReportOptionsConverter {
     data.setDetectInlinedCode(this.mojo.isDetectInlinedCode());
 
     determineHistory(data);
-    
+
     data.setExportLineCoverage(this.mojo.isExportLineCoverage());
     data.setMutationEngine(this.mojo.getMutationEngine());
     data.setJavaExecutable(this.mojo.getJavaExecutable());
@@ -168,7 +168,7 @@ public class MojoToReportOptionsConverter {
       data.setHistoryOutputLocation(historyFile);
     }
   }
-  
+
   private ReportOptions updateFromSurefire(ReportOptions option) {
     Collection<Plugin> plugins = lookupPlugin("org.apache.maven.plugins:maven-surefire-plugin");
     if (!this.mojo.isParseSurefireConfig()) {

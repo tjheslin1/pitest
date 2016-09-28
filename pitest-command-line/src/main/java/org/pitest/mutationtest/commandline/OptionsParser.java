@@ -357,10 +357,9 @@ public class OptionsParser {
     data.setTimeoutFactor(this.timeoutFactorSpec.value(userArgs));
     data.setTimeoutConstant(this.timeoutConstSpec.value(userArgs));
     data.setLoggingClasses(this.avoidCallsSpec.values(userArgs));
-    data.setExcludedMethods(FCollection.map(
-        this.excludedMethodsSpec.values(userArgs), Glob.toGlobPredicate()));
+    data.setExcludedMethods(this.excludedMethodsSpec.values(userArgs));
     data.setExcludedClasses(FCollection.map(
-        this.excludedClassesSpec.values(userArgs), Glob.toGlobPredicate()));
+         this.excludedClassesSpec.values(userArgs), Glob.toGlobPredicate()));
     data.setMaxMutationsPerClass(this.maxMutationsPerClassSpec.value(userArgs));
     data.setVerbose(userArgs.has(this.verboseSpec)
         && userArgs.valueOf(this.verboseSpec));

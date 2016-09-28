@@ -1,0 +1,44 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <groupId>sample</groupId>
+    <artifactId>pit-exclude-exact-method</artifactId>
+    <version>DEV-SNAPSHOT</version>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.1.11-SNAPSHOT</version>
+                <configuration>
+                    <exportLineCoverage>true</exportLineCoverage>
+                    <outputFormats>
+                        <value>XML</value>
+                    </outputFormats>
+                    <timestampedReports>false</timestampedReports>
+                    <targetClasses>
+                        <param>sample*</param>
+                    </targetClasses>
+                    <verbose>true</verbose>
+                    <excludedMethods>
+                        <excludedMethod>sample.AllExcluded#id</excludedMethod>
+                        <excludedMethod>sample.AllExcluded#allExcludedToString</excludedMethod>
+                        <excludedMethod>someExcludedToString</excludedMethod>
+                    </excludedMethods>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

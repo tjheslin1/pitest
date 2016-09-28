@@ -32,7 +32,7 @@ public final class GregorEngineFactory implements MutationEngineFactory {
 
   @Override
   public MutationEngine createEngine(final boolean mutateStaticInitializers,
-      final Predicate<String> excludedMethods,
+      final Predicate<MethodInfo> excludedMethods,
       final Collection<String> loggingClasses,
       final Collection<String> mutators, final boolean detectInlinedCode) {
     return createEngineWithMutators(mutateStaticInitializers, excludedMethods,
@@ -42,13 +42,13 @@ public final class GregorEngineFactory implements MutationEngineFactory {
 
   public MutationEngine createEngineWithMutators(
       final boolean mutateStaticInitializers,
-      final Predicate<String> excludedMethods,
+      final Predicate<MethodInfo> excludedMethods,
       final Collection<String> loggingClasses,
       final Collection<? extends MethodMutatorFactory> mutators,
       final boolean detectInlinedCode) {
 
     final Predicate<MethodInfo> filter = pickFilter(mutateStaticInitializers,
-        Prelude.not(stringToMethodInfoPredicate(excludedMethods)));
+        Prelude.not(excludedMethods));
     final DefaultMutationEngineConfiguration config = new DefaultMutationEngineConfiguration(
         filter, loggingClasses, mutators,
         inlinedCodeDetector(detectInlinedCode));

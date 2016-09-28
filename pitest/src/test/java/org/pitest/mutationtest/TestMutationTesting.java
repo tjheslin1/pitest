@@ -61,6 +61,7 @@ import org.pitest.mutationtest.build.WorkerFactory;
 import org.pitest.mutationtest.config.DefaultDependencyPathPredicate;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.engine.MutationEngine;
+import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
@@ -365,7 +366,7 @@ public class TestMutationTesting {
         ClassInfo.toClassName());
 
     final MutationEngine engine = new GregorEngineFactory()
-    .createEngineWithMutators(false, False.<String> instance(),
+    .createEngineWithMutators(false, False.<MethodInfo> instance(),
         Collections.<String> emptyList(), mutators, true);
 
     final MutationConfig mutationConfig = new MutationConfig(engine,

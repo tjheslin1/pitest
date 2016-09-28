@@ -30,6 +30,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.ResourceExtractor;
+import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -355,6 +356,21 @@ public class PitMojoIT {
                     "<mutation detected='true' status='KILLED'><sourceFile>SomeClass.java</sourceFile>");
     assertThat(actual).doesNotContain("status='NO_COVERAGE'");
     assertThat(actual).doesNotContain("status='RUN_ERROR'");
+  }
+
+  @Test
+  public void exactMethodsCanBeExcluded() throws Exception {
+    File testDir = prepare("/pit-exclude-exact-method");
+    verifier.executeGoal("test");
+    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+
+    Assertions.fail("TODO: implement");
+//    String actual = readResults(testDir);
+//    assertThat(actual)
+//            .contains(
+//                    "<mutation detected='true' status='KILLED'><sourceFile>SomeClass.java</sourceFile>");
+//    assertThat(actual).doesNotContain("status='NO_COVERAGE'");
+//    assertThat(actual).doesNotContain("status='RUN_ERROR'");
   }
 
   private static String readResults(File testDir) throws IOException {
